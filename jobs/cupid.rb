@@ -10,14 +10,14 @@ SCHEDULER.every '1m', :first_in => 0 do |job|
     puts "cupid api error (status-code: #{response.code})\n#{response.body}"
   else 
     data = JSON.parse(response.body)
-    clicks = data['data'].first['clicks'].to_i
-    conversions = data['data'].first['conversions'].to_i
+    clicks = data['data'].first['clicks'].sub(',','').to_i
+    conversions = data['data'].first['conversions'].sub(',','').to_i
     payout = data['data'].first['payout'][1...-1].sub(',','').to_i
     erpc = data['data'].first['erpc'].to_i
     cpl = data['data'].first['cpl'].to_i
 
     send_event('cupid_clicks', current: clicks)
-    send_event('cupid_conversions', current: conversions)
+    send_event('cupid_conversions', value: conversions)
     send_event('cupid_payout', current: payout)
     send_event('cupid_erpc', current: erpc)
     send_event('cupid_cpl', current: cpl)
